@@ -1,4 +1,4 @@
-"app.title" = "Sound Remover";
+"app.title" = "Silence Remover";
 "app.subtitle" = "Trim long pauses from an MP3 and export a faster version locally.";
 "dropzone.empty" = "Drop an MP3 here";
 "button.change_mp3" = "Change MP3";
@@ -32,7 +32,7 @@
 "waveform.elapsed" = "Elapsed: %@";
 "waveform.total" = "Total: %@";
 "waveform.elapsed_total" = "ELAPSED / TOTAL";
-"sidebar.title" = "Sound Remover";
+"sidebar.title" = "Silence Remover";
 "sidebar.import" = "Import MP3";
 "sidebar.recents" = "Recent files";
 "sidebar.empty" = "Imported files will appear here.";
