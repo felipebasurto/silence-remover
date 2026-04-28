@@ -1,4 +1,4 @@
-"app.title" = "Audio Silence Remover";
+"app.title" = "Eliminador de silencios en audio";
 "app.subtitle" = "Recorta pausas largas de un MP3 y exporta una versión más rápida localmente.";
 "dropzone.empty" = "Suelta un MP3 aquí";
 "button.change_mp3" = "Cambiar MP3";
@@ -32,7 +32,7 @@
 "waveform.elapsed" = "Transcurrido: %@";
 "waveform.total" = "Total: %@";
 "waveform.elapsed_total" = "TRANSCURRIDO / TOTAL";
-"sidebar.title" = "Audio Silence Remover";
+"sidebar.title" = "Eliminador de silencios en audio";
 "sidebar.import" = "Importar MP3";
 "sidebar.recents" = "Archivos recientes";
 "sidebar.empty" = "Los archivos importados aparecerán aquí.";
@@ -60,16 +60,19 @@
 "diagnostics.header" = "Audio Silence Remover — diagnósticos";
 "diagnostics.error_line" = "Error: %@";
 "diagnostics.trace_line" = "Registro: %@";
-"diagnostics.console_hint" = "Consola: filtra por subsistema «%@» (id del bundle). Categorías como «FFmpeg».";
+"diagnostics.console_hint" = "Consola: filtra por subsistema «%@» (identificador del paquete). Categorías como «FFmpeg».";
 "result.summary" = "Resultado: %d pausas, %@ recortados, modo %@, duración final %@.";
 "export.panel.title" = "Exportar MP3";
 "export.panel.prompt" = "Exportar";
 "error.invalid_mp3" = "El archivo seleccionado no es un MP3.";
 "error.ffmpeg_unavailable" = "FFmpeg no está disponible dentro de la app.";
 "error.ffmpeg_failed" = "FFmpeg falló: %@";
-"error.ffmpeg_no_output" = "exit %@ — sin stderr/stdout de ffmpeg (abre trace.log desde Copiar diagnósticos).";
-"error.ffmpeg_uncaught_signal" = "ffmpeg terminado por señal del sistema %@ (a menudo SIGKILL=9: sandbox o sistema; no es el mensaje de error de ffmpeg). Ver trace.log.";
+"error.ffmpeg_no_output" = "Código %@ — sin salida de error de ffmpeg (abre trace.log con Copiar diagnósticos).";
+"error.ffmpeg_uncaught_signal" = "ffmpeg terminó por señal del sistema %@ (a menudo SIGKILL=9: sandbox o sistema; no es el mensaje de error de ffmpeg). Consulta trace.log.";
 "error.audio_unreadable" = "No se pudo leer el audio.";
 "error.audio_unsupported" = "El formato PCM no es compatible.";
 "error.temporary_failed" = "No se pudo crear un archivo temporal: %@";
 "error.export_failed" = "No se pudo exportar el MP3.";
+"diagnostics.none" = "—";
+"error.fatal_workspace" = "No se pudo crear el área de trabajo temporal: %@";
+"error.ffmpeg_exit_with_output" = "Código de salida %@: %@";

@@ -43,7 +43,7 @@ final class AppState: ObservableObject {
             configurePlayerCallbacks()
             loadRecents()
         } catch {
-            fatalError("No se pudo crear el workspace temporal: \(error)")
+            fatalError(AppLocale.text("error.fatal_workspace", String(describing: error)))
         }
     }
 
@@ -214,7 +214,7 @@ final class AppState: ObservableObject {
     func copyDiagnosticsToPasteboard() {
         let body = [
             AppLocale.text("diagnostics.header"),
-            AppLocale.text("diagnostics.error_line", errorMessage ?? "—"),
+            AppLocale.text("diagnostics.error_line", errorMessage ?? AppLocale.text("diagnostics.none")),
             AppLocale.text("diagnostics.trace_line", AppTrace.traceLogPath),
             AppLocale.text("diagnostics.console_hint", AppTrace.subsystem)
         ].joined(separator: "\n\n")

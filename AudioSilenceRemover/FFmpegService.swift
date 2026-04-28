@@ -66,6 +66,8 @@ struct FFmpegService {
             let process = Process()
             process.executableURL = exe
             process.arguments = arguments
+            process.currentDirectoryURL = exe.deletingLastPathComponent()
+            process.environment = Self.sanitizedEnvironment()
 
             let errorPipe = Pipe()
             let outputPipe = Pipe()
@@ -144,6 +146,12 @@ struct FFmpegService {
         }
     }
 
+    nonisolated private static func sanitizedEnvironment() -> [String: String] {
+        ProcessInfo.processInfo.environment.filter { entry in
+            !entry.key.hasPrefix("DYLD_") && !entry.key.hasPrefix("__XPC_DYLD_")
+        }
+    }
+
     /// Short, single-line friendly message for the status bar; full text goes to `AppTrace` / Logger.
     nonisolated private static func failureSummary(
         exitCode: Int32,
@@ -156,7 +164,8 @@ struct FFmpegService {
             return truncate(stderr.replacingOccurrences(of: "\n", with: " "), max: maxLen)
         }
         if !stdout.isEmpty {
-            return "exit \(exitCode) — \(truncate(stdout.replacingOccurrences(of: "\n", with: " "), max: maxLen))"
+            let snippet = truncate(stdout.replacingOccurrences(of: "\n", with: " "), max: maxLen)
+            return AppLocale.text("error.ffmpeg_exit_with_output", "\(exitCode)", snippet)
         }
         if terminationReason == .uncaughtSignal {
             return AppLocale.text("error.ffmpeg_uncaught_signal", "\(exitCode)")
