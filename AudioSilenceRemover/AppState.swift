@@ -1,3 +1,4 @@
+import AppKit
 import Combine
 import Foundation
 
@@ -35,6 +36,9 @@ final class AppState: ObservableObject {
             ffmpegService = try? FFmpegService()
             if ffmpegService == nil {
                 errorMessage = localizedMessage(for: SoundRemoverError.ffmpegUnavailable)
+                AppTrace.record("AppState", "FFmpegService init failed — binary missing or not executable")
+            } else {
+                AppTrace.record("AppState", "FFmpegService ready")
             }
             configurePlayerCallbacks()
             loadRecents()
@@ -111,6 +115,7 @@ final class AppState: ObservableObject {
             workingMP3URL = preparedURL
             originalWaveform = try loadWaveform(from: preparedURL)
             statusMessage = AppLocale.text("status.loaded", url.lastPathComponent)
+            AppTrace.record("AppState", "loaded file=\(url.path) workingMP3=\(preparedURL.path)")
             if let bookmark = try? url.bookmarkData(
                 options: [.withSecurityScope],
                 includingResourceValuesForKeys: nil,
@@ -171,6 +176,10 @@ final class AppState: ObservableObject {
         processedWaveform = nil
         stopPlayback()
         statusMessage = AppLocale.text("status.processing")
+        AppTrace.record(
+            "AppState",
+            "process start original=\(selectedOriginalURL.path) workingMP3=\(workingMP3URL.path)"
+        )
 
         do {
             let inputWAVURL = workspace.url("input.wav")
@@ -194,11 +203,23 @@ final class AppState: ObservableObject {
                 formatSeconds(processedResult.removedDuration),
                 AppLocale.text("mode.\(processedResult.modeUsed.rawValue).title")
             )
+            AppTrace.record("AppState", "process OK pauses=\(processedResult.detectedSilenceCount)")
         } catch {
             setError(error)
         }
 
         isProcessing = false
+    }
+
+    func copyDiagnosticsToPasteboard() {
+        let body = [
+            AppLocale.text("diagnostics.header"),
+            AppLocale.text("diagnostics.error_line", errorMessage ?? "—"),
+            AppLocale.text("diagnostics.trace_line", AppTrace.traceLogPath),
+            AppLocale.text("diagnostics.console_hint")
+        ].joined(separator: "\n\n")
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(body, forType: .string)
     }
 
     func togglePlayback(for source: WaveformSource) {
@@ -270,8 +291,10 @@ final class AppState: ObservableObject {
         statusMessage = AppLocale.text("status.exporting")
 
         do {
+            AppTrace.record("AppState", "export start dest=\(destinationURL.path)")
             try await ffmpegService.exportWAVToMP3(wavURL: result.processedPreviewURL, mp3URL: destinationURL)
             statusMessage = AppLocale.text("status.exported", destinationURL.lastPathComponent)
+            AppTrace.record("AppState", "export OK \(destinationURL.lastPathComponent)")
         } catch {
             setError(error)
         }
@@ -280,9 +303,11 @@ final class AppState: ObservableObject {
     }
 
     private func setError(_ error: Error) {
-        errorMessage = localizedMessage(for: error)
+        let msg = localizedMessage(for: error)
+        errorMessage = msg
         statusMessage = AppLocale.text("status.generic_error")
         isProcessing = false
+        AppTrace.record("AppState", "error userMessage=\(msg) underlying=\(String(describing: error))")
     }
 
     private func configurePlayerCallbacks() {

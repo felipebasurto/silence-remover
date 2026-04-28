@@ -2,7 +2,7 @@ import AppKit
 import Foundation
 
 enum AppResources {
-    static func localizedString(_ key: String) -> String {
+    nonisolated static func localizedString(_ key: String) -> String {
         let fromMain = Bundle.main.localizedString(forKey: key, value: key, table: nil)
         if fromMain != key {
             return fromMain

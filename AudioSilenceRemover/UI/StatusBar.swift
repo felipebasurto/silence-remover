@@ -21,8 +21,21 @@ struct StatusBar: View {
             Text(appState.errorMessage ?? appState.statusMessage)
                 .font(.system(size: 11, design: .rounded))
                 .foregroundStyle(appState.errorMessage == nil ? SkeuoColor.textSecondary : Color(red: 1, green: 0.55, blue: 0.55))
-                .lineLimit(1)
+                .lineLimit(appState.errorMessage == nil ? 1 : 2)
                 .truncationMode(.tail)
+
+            if appState.errorMessage != nil {
+                Button {
+                    appState.copyDiagnosticsToPasteboard()
+                } label: {
+                    Image(systemName: "doc.on.doc")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(SkeuoColor.textSecondary)
+                }
+                .buttonStyle(.plain)
+                .help(AppLocale.text("status.copy_diagnostics_help"))
+                .accessibilityLabel(AppLocale.text("status.copy_diagnostics"))
+            }
 
             Spacer()
 
