@@ -216,7 +216,7 @@ final class AppState: ObservableObject {
             AppLocale.text("diagnostics.header"),
             AppLocale.text("diagnostics.error_line", errorMessage ?? "—"),
             AppLocale.text("diagnostics.trace_line", AppTrace.traceLogPath),
-            AppLocale.text("diagnostics.console_hint")
+            AppLocale.text("diagnostics.console_hint", AppTrace.subsystem)
         ].joined(separator: "\n\n")
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(body, forType: .string)

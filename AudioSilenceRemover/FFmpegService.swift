@@ -2,7 +2,10 @@ import Foundation
 import os
 
 struct FFmpegService {
-    private static let log = Logger(subsystem: "AudioSilenceRemover", category: "FFmpeg")
+    /// Must match `AppTrace.subsystem` (bundle id) so Console.app filtering matches `AppTrace` lines.
+    private static let log: Logger = {
+        Logger(subsystem: Bundle.main.bundleIdentifier ?? "AudioSilenceRemover", category: "FFmpeg")
+    }()
 
     private let executableURL: URL
 
@@ -87,19 +90,29 @@ struct FFmpegService {
 
             let errData = await stderrTask.value
             let outData = await stdoutTask.value
-            let errText = String(data: errData, encoding: .utf8)?
-                .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-            let outText = String(data: outData, encoding: .utf8)?
-                .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let errText = Self.stringFromPipeData(errData)
+            let outText = Self.stringFromPipeData(outData)
+            let terminationReason = process.terminationReason
 
             guard process.terminationStatus == 0 else {
                 let code = process.terminationStatus
-                log.error("ffmpeg exit=\(code, privacy: .public) stderr=\(errText.isEmpty ? "(empty)" : errText, privacy: .public)")
-                AppTrace.record("FFmpeg", "exit=\(code) stderr=\(errText.isEmpty ? "(empty)" : errText)")
+                let reasonLabel = Self.terminationReasonLabel(terminationReason)
+                log.error(
+                    "ffmpeg exit=\(code, privacy: .public) reason=\(reasonLabel, privacy: .public) stderrBytes=\(errData.count, privacy: .public) stdoutBytes=\(outData.count, privacy: .public) stderr=\(errText.isEmpty ? "(empty)" : errText, privacy: .public)"
+                )
+                AppTrace.record(
+                    "FFmpeg",
+                    "exit=\(code) terminationReason=\(reasonLabel) stderrBytes=\(errData.count) stdoutBytes=\(outData.count) stderr=\(errText.isEmpty ? "(empty)" : errText)"
+                )
                 if !outText.isEmpty {
                     AppTrace.record("FFmpeg", "exit=\(code) stdout=\(outText)")
                 }
-                let uiMessage = Self.failureSummary(exitCode: code, stderr: errText, stdout: outText)
+                let uiMessage = Self.failureSummary(
+                    exitCode: code,
+                    stderr: errText,
+                    stdout: outText,
+                    terminationReason: terminationReason
+                )
                 throw SoundRemoverError.ffmpegFailed(uiMessage)
             }
 
@@ -110,14 +123,43 @@ struct FFmpegService {
         }.value
     }
 
+    nonisolated private static func stringFromPipeData(_ data: Data) -> String {
+        guard !data.isEmpty else { return "" }
+        let trim: (String) -> String = { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        if let utf8 = String(data: data, encoding: .utf8), !trim(utf8).isEmpty {
+            return trim(utf8)
+        }
+        // Lossy decode so mis-encoded ffmpeg output is not dropped entirely.
+        return trim(String(decoding: data, as: UTF8.self))
+    }
+
+    nonisolated private static func terminationReasonLabel(_ reason: Process.TerminationReason) -> String {
+        switch reason {
+        case .exit:
+            "exit"
+        case .uncaughtSignal:
+            "uncaughtSignal"
+        @unknown default:
+            "unknown(\(reason.rawValue))"
+        }
+    }
+
     /// Short, single-line friendly message for the status bar; full text goes to `AppTrace` / Logger.
-    nonisolated private static func failureSummary(exitCode: Int32, stderr: String, stdout: String) -> String {
+    nonisolated private static func failureSummary(
+        exitCode: Int32,
+        stderr: String,
+        stdout: String,
+        terminationReason: Process.TerminationReason
+    ) -> String {
         let maxLen = 480
         if !stderr.isEmpty {
             return truncate(stderr.replacingOccurrences(of: "\n", with: " "), max: maxLen)
         }
         if !stdout.isEmpty {
             return "exit \(exitCode) — \(truncate(stdout.replacingOccurrences(of: "\n", with: " "), max: maxLen))"
+        }
+        if terminationReason == .uncaughtSignal {
+            return AppLocale.text("error.ffmpeg_uncaught_signal", "\(exitCode)")
         }
         return AppLocale.text("error.ffmpeg_no_output", "\(exitCode)")
     }

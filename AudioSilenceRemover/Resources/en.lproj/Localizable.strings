@@ -60,14 +60,15 @@
 "diagnostics.header" = "Audio Silence Remover — diagnostics";
 "diagnostics.error_line" = "Error: %@";
 "diagnostics.trace_line" = "Trace log: %@";
-"diagnostics.console_hint" = "Console.app: filter by subsystem “AudioSilenceRemover” or your bundle id for live logs.";
+"diagnostics.console_hint" = "Console.app: filter by subsystem “%@” (your app’s bundle id). Categories include “FFmpeg”.";
 "result.summary" = "Result: %d pauses, %@ removed, mode %@, final duration %@.";
 "export.panel.title" = "Export MP3";
 "export.panel.prompt" = "Export";
 "error.invalid_mp3" = "The selected file is not an MP3.";
 "error.ffmpeg_unavailable" = "FFmpeg is not available inside the app.";
 "error.ffmpeg_failed" = "FFmpeg failed: %@";
-"error.ffmpeg_no_output" = "exit %@ — no ffmpeg stderr/stdout (trace file path: use Copy diagnostics or Console.app → filter by subsystem).";
+"error.ffmpeg_no_output" = "exit %@ — no ffmpeg stderr/stdout (open trace.log from Copy diagnostics).";
+"error.ffmpeg_uncaught_signal" = "ffmpeg stopped by OS signal %@ (often SIGKILL=9: sandbox or system; not ffmpeg’s own exit text). See trace.log.";
 "error.audio_unreadable" = "The audio file could not be read.";
 "error.audio_unsupported" = "The PCM format is not supported.";
 "error.temporary_failed" = "A temporary file could not be created: %@";
