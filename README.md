@@ -57,7 +57,7 @@ FFmpeg packaging:
 
 ## Requirements
 
-- **macOS 14+**
+- **macOS 15+**
 - **Xcode 16+** (Swift 6)
 
 Building **Release** / `package_app.sh` assumes a working **`ffmpeg`** on the **build machine** (e.g. Homebrew) so the script can copy and relink its libraries into the bundle. Runtime on end users does **not** require Homebrew.
