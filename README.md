@@ -4,6 +4,10 @@
 
 # Audio Silence Remover
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![macOS](https://img.shields.io/badge/macOS-15%2B-000000?logo=apple)](https://developer.apple.com/macos/)
+[![Swift](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)](https://swift.org)
+
 Native **macOS** app built with **SwiftUI** that removes or shortens long pauses in spoken-word **MP3** files—entirely on your machine. **Free** on the App Store, **local-first** (no uploads), **open source** on [GitHub](https://github.com/felipebasurto/silence-remover). Source code is released under the [**MIT License**](LICENSE): a **free tool** anyone can use, inspect, and reuse within those terms.
 
 Built for podcasters, voiceover, and audiobook workflows: import an MP3, tune silence detection, preview, and export a cleaned MP3 (default **192 kbps**) without sending audio to a cloud service.
@@ -25,7 +29,9 @@ Everything lives in one **Xcode project** at the repo root:
 | `scripts/package_app.sh` | Release **archive** → `dist/Audio Silence Remover.app` + **verify** signing |
 | `scripts/ffmpeg_bundle.py` | Embeds Homebrew-linked **ffmpeg** dylibs into the `.app` (build phase + verify) |
 | `docs/images/` | README assets |
+| [`docs/privacy-policy.html`](docs/privacy-policy.html) | Privacy policy page (publish via GitHub **Pages** `/docs` for App Store URL) |
 | [`LICENSE`](LICENSE) | **MIT License** — free software for everyone (see file for full text) |
+| [`AGENTS.md`](AGENTS.md) | Durable prefs/facts for AI coding agents working in this repo |
 
 **Bundle ID:** `com.felipebasurto.audiosilenceremover` (matches the Mac App Store Connect app **Audio Silence Remover**).
 
@@ -41,6 +47,11 @@ Everything lives in one **Xcode project** at the repo root:
 - **Open source** under **MIT**: clone, inspect, build, and reuse within the license (bundled **ffmpeg** and its dylibs remain under their **upstream** licenses)
 - **Distribution path:** Xcode archive + `package_app.sh`; ffmpeg dependencies rewritten into `Contents/Frameworks` so the app does **not** rely on `/opt/homebrew` at runtime
 
+## Get the app
+
+- **Mac App Store** — Search for **Audio Silence Remover** on your Mac, or open the listing by Apple ID: [**apps.apple.com/app/id6763403196**](https://apps.apple.com/app/id6763403196). If that link does not open yet, the version may still be in review or regional rollout.
+- **Build from source** — Clone the repo, open **`AudioSilenceRemover.xcodeproj`**, select the **`AudioSilenceRemover`** scheme, and run on **My Mac** (step-by-step in [Run in Xcode](#run-in-xcode)). For a signed Release **`.app`** in **`dist/`**, run **`./scripts/package_app.sh`** (documented in **Release `.app` (local)** below).
+
 ## What it does
 
 1. Import an MP3 (picker or drag-and-drop).
@@ -48,6 +59,12 @@ Everything lives in one **Xcode project** at the repo root:
 3. Choose **Remove pauses** or **Reduce pauses**.
 4. **Process** → preview **Original** / **Result** on the waveform.
 5. **Export** a new MP3.
+
+## Known limitations
+
+- **MP3 only** for import and export in the current UI (no built-in WAV/AAC/M4A export path).
+- **One file at a time** in the main workflow (no batch queue).
+- **macOS 15+** and a **Mac with Apple Silicon or Intel** supported by the built product (see Xcode destinations).
 
 ## Architecture
 
@@ -172,6 +189,13 @@ Offline-first: audio is processed locally; nothing is uploaded by this app. **Op
 
 For **App Store Connect**, publish [`docs/privacy-policy.html`](docs/privacy-policy.html) over **HTTPS** (recommended: GitHub Pages from `/docs`; exact steps in **App Store Connect — checklist** under *Mac App Store* in this README).
 
+## Feedback, security, and contributions
+
+- **Bugs & feature ideas:** [GitHub Issues](https://github.com/felipebasurto/silence-remover/issues).
+- **Security vulnerabilities:** use the repo’s **Security** tab and **“Report a vulnerability”** (private); please do not post exploit details in public issues.
+- **Pull requests:** welcome for focused fixes and small improvements; open an issue first for larger refactors or new scope.
+- **Elsewhere:** updates and discussion also on X ([@fildotai](https://x.com/fildotai)).
+
 ## Product direction
 
 - Ship a focused Mac utility with a clear editorial story.
@@ -184,4 +208,4 @@ For **App Store Connect**, publish [`docs/privacy-policy.html`](docs/privacy-pol
 
 ## Status
 
-Active personal project—the app runs as a local utility; distribution is centered on the Xcode archive + scripts above.
+Active personal project—the app runs as a local utility; distribution is centered on the Xcode archive + scripts above. If this repo is useful, a **star** on GitHub helps others find it.
