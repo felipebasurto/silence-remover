@@ -10,6 +10,7 @@ let package = Package(
     ],
     products: [
         .library(name: "SoundRemoverCore", targets: ["SoundRemoverCore"]),
+        .library(name: "SoundRemoverUI", targets: ["SoundRemoverUI"]),
         .executable(name: "SoundRemover", targets: ["SoundRemover"])
     ],
     targets: [
@@ -17,9 +18,10 @@ let package = Package(
             name: "SoundRemoverCore",
             dependencies: []
         ),
-        .executableTarget(
-            name: "SoundRemover",
+        .target(
+            name: "SoundRemoverUI",
             dependencies: ["SoundRemoverCore"],
+            path: "Sources/SoundRemover",
             exclude: [
                 "Resources/AppIcon.iconset",
                 "Resources/AppIcon.png",
@@ -32,13 +34,18 @@ let package = Package(
                 .copy("Resources/ffmpeg")
             ]
         ),
+        .executableTarget(
+            name: "SoundRemover",
+            dependencies: ["SoundRemoverUI"],
+            path: "Sources/SoundRemoverCLI"
+        ),
         .testTarget(
             name: "SoundRemoverCoreTests",
             dependencies: ["SoundRemoverCore"]
         ),
         .testTarget(
             name: "SoundRemoverTests",
-            dependencies: ["SoundRemover"]
+            dependencies: ["SoundRemoverUI"]
         )
     ]
 )

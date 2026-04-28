@@ -1,5 +1,5 @@
 import Testing
-@testable import SoundRemover
+@testable import SoundRemoverUI
 
 struct PlaybackStateMachineTests {
     @Test

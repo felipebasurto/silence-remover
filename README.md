@@ -70,6 +70,8 @@ open Package.swift
 
 Then run the `SoundRemover` executable target.
 
+For **Mac App Store** builds (archive / `.pkg`), open **`audiosilenceremover/audiosilenceremover.xcodeproj`**. The `audiosilenceremover` app target depends on the Swift package product **`SoundRemoverUI`**, which is the same UI as `swift run SoundRemover`.
+
 ### Run from Terminal
 
 ```bash

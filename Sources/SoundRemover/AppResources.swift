@@ -33,7 +33,7 @@ enum AppResources {
 
         let bundleURL = executableURL
             .deletingLastPathComponent()
-            .appendingPathComponent("SoundRemover_SoundRemover.bundle")
+            .appendingPathComponent("SoundRemover_SoundRemoverUI.bundle")
 
         return Bundle(url: bundleURL)
     }

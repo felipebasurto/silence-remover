@@ -17,7 +17,7 @@ rm -rf "$APP_PATH"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 
 cp "$BUILD_DIR/SoundRemover" "$MACOS_DIR/SoundRemover"
-cp "$BUILD_DIR/SoundRemover_SoundRemover.bundle/ffmpeg" "$RESOURCES_DIR/ffmpeg"
+cp "$BUILD_DIR/SoundRemover_SoundRemoverUI.bundle/ffmpeg" "$RESOURCES_DIR/ffmpeg"
 cp "$ROOT_DIR/Sources/SoundRemover/Resources/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
 cp -R "$ROOT_DIR/Sources/SoundRemover/Resources/en.lproj" "$RESOURCES_DIR/en.lproj"
 cp -R "$ROOT_DIR/Sources/SoundRemover/Resources/es.lproj" "$RESOURCES_DIR/es.lproj"
