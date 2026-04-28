@@ -108,6 +108,7 @@ struct PrimaryActionButton: View {
                             .controlSize(.small)
                             .progressViewStyle(.circular)
                             .tint(isHighlighted ? SkeuoColor.cyanCore : .white)
+                            .fixedSize()
                     } else {
                         Image(systemName: systemImage)
                             .font(.system(size: 16, weight: .bold))

@@ -313,7 +313,12 @@ final class AppState: ObservableObject {
     private func configurePlayerCallbacks() {
         previewPlayer.onStateChange = { [weak self] action in
             guard let self else { return }
-            playbackState = PlaybackStateMachine.reduce(playbackState, action: action)
+            // Timer / AVAudioPlayer can fire during SwiftUI's view update pass; mutating @Published
+            // then triggers "Publishing changes from within view updates". Defer to next run-loop turn.
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.playbackState = PlaybackStateMachine.reduce(self.playbackState, action: action)
+            }
         }
     }
 

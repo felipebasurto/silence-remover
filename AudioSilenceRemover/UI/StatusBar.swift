@@ -7,9 +7,9 @@ struct StatusBar: View {
         HStack(spacing: 10) {
             if appState.isProcessing {
                 ProgressView()
+                    .progressViewStyle(.circular)
                     .controlSize(.small)
-                    .scaleEffect(0.7)
-                    .frame(width: 12, height: 12)
+                    .fixedSize()
             } else {
                 SkeuoLED(
                     color: appState.errorMessage == nil ? SkeuoColor.cyanCore : Color(red: 1, green: 0.4, blue: 0.4),
