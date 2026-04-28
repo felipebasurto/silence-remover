@@ -26,6 +26,8 @@ The goal is simple: make silence cleanup feel like a polished desktop utility in
 - Test-covered audio processing core separated from the UI layer
 - Designed as both an open-source codebase and a product candidate for the Mac App Store
 
+The `ffmpeg` binary under `Sources/SoundRemover/Resources/` may be **dynamically linked** (for example to a Homebrew path on Apple Silicon). That works on a dev machine with the same libraries installed; for **distribution or Mac App Store**, ship a **statically linked** `ffmpeg` with the same filename so `dyld` does not depend on `/opt/homebrew`.
+
 ## What it does
 
 1. Import an MP3 file.
