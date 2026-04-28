@@ -4,9 +4,11 @@
 
 # Audio Silence Remover
 
-Native **macOS** app built with **SwiftUI** that removes or shortens long pauses in spoken-word **MP3** files—entirely on your machine. **Free** on the App Store, **local-first** (no uploads), **open source** on [GitHub](https://github.com/felipebasurto/silence-remover).
+Native **macOS** app built with **SwiftUI** that removes or shortens long pauses in spoken-word **MP3** files—entirely on your machine. **Free** on the App Store, **local-first** (no uploads), **open source** on [GitHub](https://github.com/felipebasurto/silence-remover). Source code is released under the [**MIT License**](LICENSE): a **free tool** anyone can use, inspect, and reuse within those terms.
 
 Built for podcasters, voiceover, and audiobook workflows: import an MP3, tune silence detection, preview, and export a cleaned MP3 (default **192 kbps**) without sending audio to a cloud service.
+
+**Author on X:** [@fildotai](https://x.com/fildotai)
 
 ![Audio Silence Remover screenshot](docs/images/app-screenshot.png)
 
@@ -23,6 +25,7 @@ Everything lives in one **Xcode project** at the repo root:
 | `scripts/package_app.sh` | Release **archive** → `dist/Audio Silence Remover.app` + **verify** signing |
 | `scripts/ffmpeg_bundle.py` | Embeds Homebrew-linked **ffmpeg** dylibs into the `.app` (build phase + verify) |
 | `docs/images/` | README assets |
+| [`LICENSE`](LICENSE) | **MIT License** — free software for everyone (see file for full text) |
 
 **Bundle ID:** `com.felipebasurto.audiosilenceremover` (matches the Mac App Store Connect app **Audio Silence Remover**).
 
@@ -35,7 +38,7 @@ Everything lives in one **Xcode project** at the repo root:
 - **Waveform** preview, **MP3** in/out via bundled **ffmpeg**
 - **Recents** persisted with **security-scoped bookmarks** (sandbox-safe reopen)
 - **English / Spanish** strings under `AudioSilenceRemover/Resources/{en,es}.lproj/`
-- **Open source** repository: clone, inspect, and build from source
+- **Open source** under **MIT**: clone, inspect, build, and reuse within the license
 - **Distribution path:** Xcode archive + `package_app.sh`; ffmpeg dependencies rewritten into `Contents/Frameworks` so the app does **not** rely on `/opt/homebrew` at runtime
 
 ## What it does
@@ -141,7 +144,9 @@ Use or adapt this in **App Store Connect → App Information / Mac App Store** (
 >
 > **Local & private:** Import an MP3, adjust threshold and timing, preview on the waveform, then export a new MP3 (default 192 kbps). App Sandbox keeps access scoped to files you choose.
 >
-> **Open source:** The complete app source is public at `https://github.com/felipebasurto/silence-remover` — build it yourself, audit the pipeline, or suggest improvements.
+> **Open source:** The complete app source is public at `https://github.com/felipebasurto/silence-remover` under the **MIT License** — free for anyone to use, study, and redistribute under those terms.
+
+**Follow the author:** [@fildotai on X](https://x.com/fildotai)
 
 **Keywords** (comma-separated, no spaces after commas; stay within Apple’s character limit):
 
@@ -155,7 +160,7 @@ Use or adapt this in **App Store Connect → App Information / Mac App Store** (
 
 **Subtítulo:** Gratis y local: recorta silencios en MP3 — código abierto.
 
-**Descripción (resumen):** Utilidad **gratuita** para acortar o eliminar pausas largas en MP3 de voz. Todo el procesamiento ocurre **en tu Mac**; sin subidas a la nube. **Código abierto** en GitHub: `felipebasurto/silence-remover`.
+**Descripción (resumen):** Utilidad **gratuita** para acortar o eliminar pausas largas en MP3 de voz. Todo el procesamiento ocurre **en tu Mac**; sin subidas a la nube. **Código abierto** (licencia **MIT**) en GitHub: `felipebasurto/silence-remover`. Sigue al autor en X: **@fildotai**.
 
 ## Logging
 
