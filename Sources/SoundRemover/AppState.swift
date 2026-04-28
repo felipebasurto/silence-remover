@@ -15,7 +15,7 @@ final class AppState: ObservableObject {
     @Published private(set) var playbackState: PlaybackState = .idle
     @Published private(set) var recents: [RecentFile] = []
 
-    private static let recentsDefaultsKey = "SoundRemover.recents.v1"
+    private static let recentsDefaultsKey = "SoundRemover.recents.v2"
     private static let maxRecents = 12
 
     private let mp3ImportService = MP3ImportService()
@@ -111,14 +111,43 @@ final class AppState: ObservableObject {
             workingMP3URL = preparedURL
             originalWaveform = try loadWaveform(from: preparedURL)
             statusMessage = AppLocale.text("status.loaded", url.lastPathComponent)
-            appendRecent(url: url, duration: originalWaveform?.duration)
+            if let bookmark = try? url.bookmarkData(
+                options: [.withSecurityScope],
+                includingResourceValuesForKeys: nil,
+                relativeTo: nil
+            ) {
+                appendRecent(
+                    bookmarkData: bookmark,
+                    canonicalPath: url.standardizedFileURL.path,
+                    displayName: url.lastPathComponent,
+                    duration: originalWaveform?.duration
+                )
+            }
         } catch {
             setError(error)
         }
     }
 
     func openRecent(_ recent: RecentFile) async {
-        await selectFile(recent.url)
+        do {
+            let url = try recent.resolveURL()
+            await selectFile(url)
+        } catch {
+            removeRecent(id: recent.id)
+            setError(error)
+        }
+    }
+
+    var selectedFileCanonicalPath: String? {
+        selectedOriginalURL?.standardizedFileURL.path
+    }
+
+    func removeRecent(id: UUID) {
+        let updated = recents.filter { $0.id != id }
+        recents = updated
+        if let data = try? JSONEncoder().encode(updated) {
+            UserDefaults.standard.set(data, forKey: Self.recentsDefaultsKey)
+        }
     }
 
     func clearRecents() {
@@ -298,8 +327,8 @@ final class AppState: ObservableObject {
             AppLocale.text("error.audio_unreadable")
         case SoundRemoverError.audioFormatUnsupported:
             AppLocale.text("error.audio_unsupported")
-        case SoundRemoverError.temporaryFileFailed:
-            AppLocale.text("error.temporary_failed")
+        case SoundRemoverError.temporaryFileFailed(let reason):
+            AppLocale.text("error.temporary_failed", reason)
         case SoundRemoverError.exportFailed:
             AppLocale.text("error.export_failed")
         default:
@@ -322,17 +351,34 @@ final class AppState: ObservableObject {
         guard let data = UserDefaults.standard.data(forKey: Self.recentsDefaultsKey) else {
             return
         }
-        if let decoded = try? JSONDecoder().decode([RecentFile].self, from: data) {
-            recents = decoded.filter { FileManager.default.fileExists(atPath: $0.url.path) }
+        guard let decoded = try? JSONDecoder().decode([RecentFile].self, from: data) else {
+            UserDefaults.standard.removeObject(forKey: Self.recentsDefaultsKey)
+            return
+        }
+        recents = decoded.filter { recent in
+            guard let url = try? recent.resolveURL() else { return false }
+            let scoped = url.startAccessingSecurityScopedResource()
+            defer {
+                if scoped {
+                    url.stopAccessingSecurityScopedResource()
+                }
+            }
+            return FileManager.default.fileExists(atPath: url.path)
         }
     }
 
-    private func appendRecent(url: URL, duration: TimeInterval?) {
-        var updated = recents.filter { $0.url != url }
+    private func appendRecent(
+        bookmarkData: Data,
+        canonicalPath: String,
+        displayName: String,
+        duration: TimeInterval?
+    ) {
+        var updated = recents.filter { $0.canonicalPath != canonicalPath }
         let entry = RecentFile(
             id: UUID(),
-            url: url,
-            displayName: url.lastPathComponent,
+            bookmarkData: bookmarkData,
+            canonicalPath: canonicalPath,
+            displayName: displayName,
             duration: duration,
             addedAt: Date()
         )
@@ -349,7 +395,9 @@ final class AppState: ObservableObject {
 
 struct RecentFile: Identifiable, Hashable, Codable {
     let id: UUID
-    let url: URL
+    /// Security-scoped bookmark so reopening from recents works under App Sandbox.
+    let bookmarkData: Data
+    let canonicalPath: String
     let displayName: String
     let duration: TimeInterval?
     let addedAt: Date
@@ -358,5 +406,19 @@ struct RecentFile: Identifiable, Hashable, Codable {
         guard let duration, duration > 0 else { return nil }
         let total = Int(duration.rounded(.down))
         return String(format: "%d:%02d", total / 60, total % 60)
+    }
+
+    func resolveURL() throws -> URL {
+        var stale = false
+        let url = try URL(
+            resolvingBookmarkData: bookmarkData,
+            options: [.withSecurityScope, .withoutUI],
+            relativeTo: nil,
+            bookmarkDataIsStale: &stale
+        )
+        if stale {
+            // Caller may refresh bookmark later; still try the resolved URL.
+        }
+        return url
     }
 }

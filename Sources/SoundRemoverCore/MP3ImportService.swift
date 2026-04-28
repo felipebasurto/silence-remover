@@ -16,7 +16,7 @@ public struct MP3ImportService {
             try FileManager.default.copyItem(at: sourceURL, to: destinationURL)
             return destinationURL
         } catch {
-            throw SoundRemoverError.temporaryFileFailed
+            throw SoundRemoverError.temporaryFileFailed(error.localizedDescription)
         }
     }
 }

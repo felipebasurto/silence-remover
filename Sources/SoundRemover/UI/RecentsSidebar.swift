@@ -67,7 +67,7 @@ struct RecentsSidebar: View {
                             ForEach(appState.recents) { recent in
                                 RecentRow(
                                     recent: recent,
-                                    isSelected: appState.selectedOriginalURL == recent.url
+                                    isSelected: appState.selectedFileCanonicalPath == recent.canonicalPath
                                 ) {
                                     Task { await appState.openRecent(recent) }
                                 }

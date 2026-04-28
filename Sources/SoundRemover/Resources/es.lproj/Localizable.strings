@@ -63,5 +63,5 @@
 "error.ffmpeg_failed" = "FFmpeg falló: %@";
 "error.audio_unreadable" = "No se pudo leer el audio.";
 "error.audio_unsupported" = "El formato PCM no es compatible.";
-"error.temporary_failed" = "No se pudo crear un archivo temporal.";
+"error.temporary_failed" = "No se pudo crear un archivo temporal: %@";
 "error.export_failed" = "No se pudo exportar el MP3.";

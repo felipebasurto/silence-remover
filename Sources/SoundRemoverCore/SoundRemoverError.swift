@@ -6,7 +6,7 @@ public enum SoundRemoverError: LocalizedError {
     case ffmpegFailed(String)
     case audioUnreadable
     case audioFormatUnsupported
-    case temporaryFileFailed
+    case temporaryFileFailed(String)
     case exportFailed
 
     public var errorDescription: String? {
@@ -21,8 +21,8 @@ public enum SoundRemoverError: LocalizedError {
             "The audio file could not be read."
         case .audioFormatUnsupported:
             "The PCM format is not supported."
-        case .temporaryFileFailed:
-            "A temporary file could not be created."
+        case .temporaryFileFailed(let reason):
+            "A temporary file could not be created: \(reason)"
         case .exportFailed:
             "The MP3 could not be exported."
         }
