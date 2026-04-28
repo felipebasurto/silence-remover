@@ -101,9 +101,16 @@ Shared test plan: `AudioSilenceRemover.xcodeproj/xcshareddata/xctestplans/AudioS
 
 Produces **`dist/Audio Silence Remover.app`** (Release archive, verified ffmpeg linkage and codesign). Uses a repo-local **DerivedData** path (`.derivedData/`) so archives stay predictable.
 
+## Mac App Store (archive / validation)
+
+- Bundled **`Contents/Resources/ffmpeg`** is **code-signed with App Sandbox** via `scripts/ffmpeg-sandbox.entitlements` (same idea as the main app: sandbox + user-selected read-write). Without this, App Store Connect reports *“App sandbox not enabled”* for the nested ffmpeg executable.
+- Before signing, **`strip -x -S`** is run on ffmpeg and each embedded **`.dylib`** so Apple’s symbol upload step does not look for dSYMs for those third-party Homebrew binaries.
+
+Re-archive in Xcode after changing `scripts/ffmpeg_bundle.py` or entitlements.
+
 ## Logging
 
-FFmpeg resolution and runs log to **`Logger`** with subsystem **`AudioSilenceRemover`**, category **`FFmpeg`** (visible in **Console.app** when debugging).
+Trace and diagnostics go to **`trace.log`** (see in-app **Copy diagnostics**) and to **Console.app** when you add your own `Logger` calls.
 
 ## Privacy
 

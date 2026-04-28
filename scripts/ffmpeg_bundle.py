@@ -11,6 +11,9 @@ from pathlib import Path
 
 HOME_BREW_PREFIXES = ("/opt/homebrew/", "/usr/local/", "/opt/local/")
 
+# Must match app sandbox story; App Store validates nested executables.
+FFMPEG_ENTITLEMENTS = Path(__file__).resolve().parent / "ffmpeg-sandbox.entitlements"
+
 
 def run(cmd: list[str]) -> str:
     result = subprocess.run(cmd, check=True, text=True, stdout=subprocess.PIPE)
@@ -63,7 +66,17 @@ def remove_code_signature(binary: Path) -> None:
     )
 
 
-def sign_binary(binary: Path) -> None:
+def strip_for_app_store(binary: Path) -> None:
+    """Remove debug symbols from third-party Mach-O files so Connect does not expect dSYMs for them."""
+    subprocess.run(
+        ["strip", "-x", "-S", str(binary)],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+
+
+def sign_binary(binary: Path, *, entitlements: Path | None = None) -> None:
     identity = os.environ.get("EXPANDED_CODE_SIGN_IDENTITY") or "-"
     command = [
         "codesign",
@@ -74,6 +87,8 @@ def sign_binary(binary: Path) -> None:
     ]
     if os.environ.get("ENABLE_HARDENED_RUNTIME") == "YES":
         command.extend(["--options", "runtime"])
+    if entitlements is not None and entitlements.is_file():
+        command.extend(["--entitlements", str(entitlements)])
     command.append(str(binary))
     subprocess.run(command, check=True)
 
@@ -81,6 +96,7 @@ def sign_binary(binary: Path) -> None:
 def patch_binary(binary: Path, copied: dict[str, Path]) -> None:
     deps = load_commands(binary)
     remove_code_signature(binary)
+    strip_for_app_store(binary)
     if binary.parent.name == "Frameworks":
         subprocess.run(["install_name_tool", "-id", install_name(binary), str(binary)], check=True)
 
@@ -98,7 +114,12 @@ def patch_binary(binary: Path, copied: dict[str, Path]) -> None:
             ],
             check=True,
         )
-    sign_binary(binary)
+    ffmpeg_entitlements = (
+        FFMPEG_ENTITLEMENTS
+        if binary.name == "ffmpeg" and binary.parent.name == "Resources"
+        else None
+    )
+    sign_binary(binary, entitlements=ffmpeg_entitlements)
 
 
 def copy_dependency(dep: str, frameworks_dir: Path, copied: dict[str, Path], queue: list[Path]) -> None:
