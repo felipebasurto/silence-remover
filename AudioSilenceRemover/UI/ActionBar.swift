@@ -104,11 +104,10 @@ struct PrimaryActionButton: View {
             HStack(spacing: 12) {
                 ZStack {
                     if isLoading {
-                        ProgressView()
-                            .controlSize(.small)
-                            .progressViewStyle(.circular)
-                            .tint(isHighlighted ? SkeuoColor.cyanCore : .white)
-                            .fixedSize()
+                        ProcessingSpinner(
+                            size: 16,
+                            tint: isHighlighted ? SkeuoColor.cyanCore : .white
+                        )
                     } else {
                         Image(systemName: systemImage)
                             .font(.system(size: 16, weight: .bold))

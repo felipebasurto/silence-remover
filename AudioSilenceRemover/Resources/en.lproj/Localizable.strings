@@ -60,7 +60,7 @@
 "diagnostics.header" = "Audio Silence Remover — diagnostics";
 "diagnostics.error_line" = "Error: %@";
 "diagnostics.trace_line" = "Trace log: %@";
-"diagnostics.console_hint" = "Console.app: filter by subsystem “%@” (your app’s bundle id). Categories include “FFmpeg”.";
+"diagnostics.console_hint" = "Console.app: for FFmpeg errors, filter by subsystem “%@” and category “FFmpeg”.";
 "result.summary" = "Result: %d pauses, %@ removed, mode %@, final duration %@.";
 "export.panel.title" = "Export MP3";
 "export.panel.prompt" = "Export";

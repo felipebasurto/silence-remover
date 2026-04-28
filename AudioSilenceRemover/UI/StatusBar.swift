@@ -6,10 +6,7 @@ struct StatusBar: View {
     var body: some View {
         HStack(spacing: 10) {
             if appState.isProcessing {
-                ProgressView()
-                    .progressViewStyle(.circular)
-                    .controlSize(.small)
-                    .fixedSize()
+                ProcessingSpinner(size: 14, tint: SkeuoColor.cyanCore)
             } else {
                 SkeuoLED(
                     color: appState.errorMessage == nil ? SkeuoColor.cyanCore : Color(red: 1, green: 0.4, blue: 0.4),

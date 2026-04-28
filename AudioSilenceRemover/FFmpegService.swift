@@ -2,7 +2,6 @@ import Foundation
 import os
 
 struct FFmpegService {
-    /// Must match `AppTrace.subsystem` (bundle id) so Console.app filtering matches `AppTrace` lines.
     private static let log: Logger = {
         Logger(subsystem: Bundle.main.bundleIdentifier ?? "AudioSilenceRemover", category: "FFmpeg")
     }()
@@ -11,8 +10,6 @@ struct FFmpegService {
 
     init() throws {
         let mainResourcesURL = Bundle.main.resourceURL?.appendingPathComponent("ffmpeg")
-
-        Self.log.debug("ffmpeg resolve: mainResourcesURL=\(mainResourcesURL?.path ?? "nil", privacy: .public) exists=\(mainResourcesURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false, privacy: .public)")
 
         guard
             let executableURL = mainResourcesURL,
@@ -27,13 +24,10 @@ struct FFmpegService {
             throw SoundRemoverError.ffmpegUnavailable
         }
 
-        Self.log.info("ffmpeg using binary at \(executableURL.path, privacy: .public)")
-
         self.executableURL = executableURL
     }
 
     func convertMP3ToWAV(mp3URL: URL, wavURL: URL) async throws {
-        Self.log.debug("ffmpeg convertMP3ToWAV in=\(mp3URL.path, privacy: .public) out=\(wavURL.path, privacy: .public)")
         try await run(arguments: [
             "-y",
             "-nostdin",
@@ -46,7 +40,6 @@ struct FFmpegService {
     }
 
     func exportWAVToMP3(wavURL: URL, mp3URL: URL) async throws {
-        Self.log.debug("ffmpeg exportWAVToMP3 in=\(wavURL.path, privacy: .public) out=\(mp3URL.path, privacy: .public)")
         try await run(arguments: [
             "-y",
             "-nostdin",
@@ -73,10 +66,6 @@ struct FFmpegService {
             let outputPipe = Pipe()
             process.standardError = errorPipe
             process.standardOutput = outputPipe
-
-            let argLine = arguments.joined(separator: " ")
-            log.debug("ffmpeg spawn: \(exe.path, privacy: .public) args=\(argLine, privacy: .public)")
-            AppTrace.record("FFmpeg", "spawn \(exe.path) \(argLine)")
 
             do {
                 try process.run()
@@ -117,11 +106,6 @@ struct FFmpegService {
                 )
                 throw SoundRemoverError.ffmpegFailed(uiMessage)
             }
-
-            if !errText.isEmpty {
-                log.debug("ffmpeg stderr (non-fatal): \(errText, privacy: .public)")
-            }
-            log.debug("ffmpeg finished OK")
         }.value
     }
 
