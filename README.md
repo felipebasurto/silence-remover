@@ -110,6 +110,19 @@ Produces **`dist/Audio Silence Remover.app`** (Release archive, verified ffmpeg 
 
 Re-archive in Xcode after changing `scripts/ffmpeg_bundle.py` or entitlements.
 
+### App Store Connect — checklist before “Add for review”
+
+Connect will block submission until these are done (your errors map here):
+
+1. **Privacy policy URL** — In **App Privacy** (left sidebar), paste a **public HTTPS** URL. This repo includes [`docs/privacy-policy.html`](docs/privacy-policy.html). Publish it with **GitHub Pages** (*Settings → Pages → Build and deployment: branch `main`, folder `/docs`*), then use:
+   **`https://felipebasurto.github.io/silence-remover/privacy-policy.html`**
+   (Push the file to `main` first; if the URL 404s, Pages is not enabled yet.)
+2. **App Privacy questionnaire** — Same **App Privacy** section: an **Account Holder or Admin** must complete **Privacy practices** (for a purely local app, Apple’s flow is usually **no data collected** from the app; answer each category truthfully).
+3. **Price and availability** — **Monetization → Pricing**: choose a **free** price tier (e.g. **Free**); save.
+4. **Copyright** (Mac App Store version page) — Not optional. Use your legal line, e.g. **`2026 Felipe Basurto Barrio`** or **`© 2026 Felipe Basurto Barrio`** (match how you want it shown on the store; avoid leaving the field empty — the “200” in the UI is often **characters remaining**, not the value saved).
+5. **Screenshots** — Meet Apple’s **minimum** for Mac (use **Gestor de recursos multimedia** if needed); one screenshot may not be enough for all required display sizes.
+6. **App Review information** — **Nombre, apellidos, teléfono y correo** del contacto de revisión are required; “Es necesario iniciar sesión” only applies if the app needs an account (this app does not — leave login blank or indicate not applicable per Apple’s form).
+
 ## App Store Connect — suggested listing copy
 
 Use or adapt this in **App Store Connect → App Information / Mac App Store** (English primary; add Spanish localization in **App Store** tab if you want).
@@ -151,6 +164,8 @@ Trace and diagnostics go to **`trace.log`** (see in-app **Copy diagnostics**) an
 ## Privacy
 
 Offline-first: audio is processed locally; nothing is uploaded by this app. **Open source** code is available for review at [github.com/felipebasurto/silence-remover](https://github.com/felipebasurto/silence-remover).
+
+For **App Store Connect**, publish [`docs/privacy-policy.html`](docs/privacy-policy.html) over **HTTPS** (recommended: GitHub Pages from `/docs`; exact steps in **App Store Connect — checklist** under *Mac App Store* in this README).
 
 ## Product direction
 
