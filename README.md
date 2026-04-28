@@ -38,7 +38,7 @@ Everything lives in one **Xcode project** at the repo root:
 - **Waveform** preview, **MP3** in/out via bundled **ffmpeg**
 - **Recents** persisted with **security-scoped bookmarks** (sandbox-safe reopen)
 - **English / Spanish** strings under `AudioSilenceRemover/Resources/{en,es}.lproj/`
-- **Open source** under **MIT**: clone, inspect, build, and reuse within the license
+- **Open source** under **MIT**: clone, inspect, build, and reuse within the license (bundled **ffmpeg** and its dylibs remain under their **upstream** licenses)
 - **Distribution path:** Xcode archive + `package_app.sh`; ffmpeg dependencies rewritten into `Contents/Frameworks` so the app does **not** rely on `/opt/homebrew` at runtime
 
 ## What it does
