@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "2A9B2F9E-8F29-4C5E-9A4C-7D6D6E1E3B21",
+      "name" : "Default",
+      "options" : {
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "testTimeoutsEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:AudioSilenceRemover.xcodeproj",
+      "identifier" : "A00000000000000000000008",
+      "name" : "AudioSilenceRemover"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:AudioSilenceRemover.xcodeproj",
+        "identifier" : "A00000000000000000000009",
+        "name" : "AudioSilenceRemoverTests"
+      }
+    }
+  ],
+  "version" : 1
+}

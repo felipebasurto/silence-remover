@@ -1,4 +1,5 @@
 .build/
+.derivedData/
 dist/
 .cursor/
 .DS_Store
