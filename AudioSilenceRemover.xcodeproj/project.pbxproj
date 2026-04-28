@@ -352,6 +352,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Audio Silence Remover";
 				INFOPLIST_KEY_CFBundleName = "Audio Silence Remover";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Felipe Basurto. Free app; audio stays on your Mac; open source.";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
@@ -389,6 +390,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Audio Silence Remover";
 				INFOPLIST_KEY_CFBundleName = "Audio Silence Remover";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Felipe Basurto. Free app; audio stays on your Mac; open source.";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;

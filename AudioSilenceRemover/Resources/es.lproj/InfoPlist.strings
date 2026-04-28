@@ -1,2 +1,3 @@
 "CFBundleName" = "Eliminador silencios";
 "CFBundleDisplayName" = "Eliminador de silencios";
+"NSHumanReadableCopyright" = "Copyright © 2026 Felipe Basurto. App gratuita: el audio no sale de tu Mac. Código abierto en github.com/felipebasurto/silence-remover.";

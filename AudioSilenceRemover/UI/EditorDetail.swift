@@ -56,6 +56,10 @@ struct EmptyDropArea: View {
                 .font(.caption)
                 .foregroundStyle(SkeuoColor.textMuted)
 
+            Text(AppLocale.text("dropzone.tagline"))
+                .font(.caption2)
+                .foregroundStyle(SkeuoColor.textSecondary)
+
             Button(action: onPickFile) {
                 Label(AppLocale.text("button.select_mp3"), systemImage: "folder")
             }

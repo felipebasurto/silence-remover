@@ -1,6 +1,7 @@
 "app.title" = "Eliminador de silencios en audio";
-"app.subtitle" = "Recorta pausas largas de un MP3 y exporta una versión más rápida localmente.";
+"app.subtitle" = "Gratis, local y código abierto — recorta silencios largos en MP3 en tu Mac.";
 "dropzone.empty" = "Suelta un MP3 aquí";
+"dropzone.tagline" = "Gratis · Solo en tu Mac · Código abierto";
 "button.change_mp3" = "Cambiar MP3";
 "button.select_mp3" = "Seleccionar MP3";
 "button.process" = "Procesar";
@@ -48,7 +49,7 @@
 "action.export" = "Exportar MP3";
 "action.exporting" = "Exportando...";
 "import.result_ready" = "Resultado procesado listo";
-"status.ready" = "Arrastra un MP3 o selecciónalo desde Finder.";
+"status.ready" = "Arrastra un MP3 o selecciónalo desde Finder. Sin nube: gratis y código abierto.";
 "status.loaded" = "MP3 cargado: %@";
 "status.processing" = "Procesando audio...";
 "status.processed" = "Listo: %d pausas detectadas, %@ recortados, modo %@.";

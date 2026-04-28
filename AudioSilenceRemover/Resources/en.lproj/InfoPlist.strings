@@ -1,2 +1,3 @@
 "CFBundleName" = "Audio Silence Remover";
 "CFBundleDisplayName" = "Audio Silence Remover";
+"NSHumanReadableCopyright" = "Copyright © 2026 Felipe Basurto. Free app — your audio never leaves your Mac — open source at github.com/felipebasurto/silence-remover.";

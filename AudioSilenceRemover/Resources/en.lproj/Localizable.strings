@@ -1,6 +1,7 @@
 "app.title" = "Audio Silence Remover";
-"app.subtitle" = "Trim long pauses from an MP3 and export a faster version locally.";
+"app.subtitle" = "Free, local, open source — trim long MP3 silences on your Mac.";
 "dropzone.empty" = "Drop an MP3 here";
+"dropzone.tagline" = "Free · Runs on your Mac only · Open source";
 "button.change_mp3" = "Change MP3";
 "button.select_mp3" = "Select MP3";
 "button.process" = "Process";
@@ -48,7 +49,7 @@
 "action.export" = "Export MP3";
 "action.exporting" = "Exporting...";
 "import.result_ready" = "Processed result ready";
-"status.ready" = "Drop an MP3 or select it from Finder.";
+"status.ready" = "Drop an MP3 or select it from Finder. No cloud — free and open source.";
 "status.loaded" = "Loaded MP3: %@";
 "status.processing" = "Processing audio...";
 "status.processed" = "Done: %d pauses detected, %@ removed, mode %@.";
