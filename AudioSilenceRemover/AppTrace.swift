@@ -3,7 +3,7 @@ import os
 
 /// Unified logging plus an on-disk trace file for sandboxed builds where Console is easy to miss.
 enum AppTrace {
-    /// `DispatchQueue` is `Sendable`, but the compiler still treats this `static let` as MainActor-isolated under `-default-isolation=MainActor` unless marked `nonisolated(unsafe)`.
+    /// `DispatchQueue` is `Sendable`, but under `-default-isolation=MainActor` this `static let` is still MainActor-isolated unless marked `nonisolated(unsafe)`.
     nonisolated(unsafe) private static let ioQueue = DispatchQueue(label: "com.felipebasurto.audiosilenceremover.trace")
 
     nonisolated static var subsystem: String {
@@ -33,6 +33,10 @@ enum AppTrace {
     nonisolated static func record(_ category: String, _ message: String) {
         let log = logger(category: category)
         log.notice("\(message, privacy: .public)")
+        #if DEBUG
+        // `Logger` uses Unified Logging; Xcode’s debug console often omits `notice`/`debug` lines. `print` is stdout and always appears when running under the debugger.
+        Swift.print("[\(category)] \(message)")
+        #endif
         let stamp = ISO8601DateFormatter().string(from: Date())
         let line = "\(stamp) [\(category)] \(message)\n"
         ioQueue.async {
