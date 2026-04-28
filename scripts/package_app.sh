@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Ships to App Store Connect app "Audio Silence Remover" (macOS only).
+# Bundle ID must match ASC: com.felipebasurto.audiosilenceremover
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 BUILD_DIR="$ROOT_DIR/.build/arm64-apple-macosx/release"
 DIST_DIR="$ROOT_DIR/dist"
@@ -30,7 +32,7 @@ cat > "$CONTENTS_DIR/Info.plist" <<'PLIST'
     <key>CFBundleExecutable</key>
     <string>SoundRemover</string>
     <key>CFBundleIdentifier</key>
-    <string>local.sound-remover.app</string>
+    <string>com.felipebasurto.audiosilenceremover</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
