@@ -9,7 +9,6 @@
   ],
   "defaultOptions" : {
     "codeCoverage" : false,
-    "testTimeoutsEnabled" : true,
     "targetForVariableExpansion" : {
       "containerPath" : "container:AudioSilenceRemover.xcodeproj",
       "identifier" : "A00000000000000000000008",

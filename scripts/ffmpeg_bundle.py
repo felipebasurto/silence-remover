@@ -42,8 +42,45 @@ def relative_dependency(binary: Path, dep_name: str) -> str:
     return f"@loader_path/{dep_name}"
 
 
+def has_code_signature(binary: Path) -> bool:
+    return subprocess.run(
+        ["codesign", "-dv", str(binary)],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    ).returncode == 0
+
+
+def remove_code_signature(binary: Path) -> None:
+    if not has_code_signature(binary):
+        return
+
+    subprocess.run(
+        ["codesign", "--remove-signature", str(binary)],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=True,
+    )
+
+
+def sign_binary(binary: Path) -> None:
+    identity = os.environ.get("EXPANDED_CODE_SIGN_IDENTITY") or "-"
+    command = [
+        "codesign",
+        "--force",
+        "--sign",
+        identity,
+        "--timestamp=none",
+    ]
+    if os.environ.get("ENABLE_HARDENED_RUNTIME") == "YES":
+        command.extend(["--options", "runtime"])
+    command.append(str(binary))
+    subprocess.run(command, check=True)
+
+
 def patch_binary(binary: Path, copied: dict[str, Path]) -> None:
     deps = load_commands(binary)
+    remove_code_signature(binary)
     if binary.parent.name == "Frameworks":
         subprocess.run(["install_name_tool", "-id", install_name(binary), str(binary)], check=True)
 
@@ -61,6 +98,7 @@ def patch_binary(binary: Path, copied: dict[str, Path]) -> None:
             ],
             check=True,
         )
+    sign_binary(binary)
 
 
 def copy_dependency(dep: str, frameworks_dir: Path, copied: dict[str, Path], queue: list[Path]) -> None:

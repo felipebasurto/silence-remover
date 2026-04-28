@@ -24,6 +24,15 @@ mkdir -p "$DIST_DIR"
 cp -R "$ARCHIVE_APP_PATH" "$APP_PATH"
 
 "$ROOT_DIR/scripts/ffmpeg_bundle.py" verify "$APP_PATH"
+codesign \
+  --force \
+  --deep \
+  --sign - \
+  --timestamp=none \
+  --options runtime \
+  --entitlements "$ROOT_DIR/AudioSilenceRemover/AudioSilenceRemover.entitlements" \
+  "$APP_PATH"
+
 codesign --verify --deep --strict --verbose=2 "$APP_PATH"
 
 echo "$APP_PATH"

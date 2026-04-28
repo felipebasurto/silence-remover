@@ -3,8 +3,7 @@ import os
 
 /// Unified logging plus an on-disk trace file for sandboxed builds where Console is easy to miss.
 enum AppTrace {
-    /// `DispatchQueue` is `Sendable`, but under `-default-isolation=MainActor` this `static let` is still MainActor-isolated unless marked `nonisolated(unsafe)`.
-    nonisolated(unsafe) private static let ioQueue = DispatchQueue(label: "com.felipebasurto.audiosilenceremover.trace")
+    nonisolated private static let ioQueue = DispatchQueue(label: "com.felipebasurto.audiosilenceremover.trace")
 
     nonisolated static var subsystem: String {
         Bundle.main.bundleIdentifier ?? "AudioSilenceRemover"
