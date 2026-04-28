@@ -67,9 +67,28 @@ def remove_code_signature(binary: Path) -> None:
 
 
 def strip_for_app_store(binary: Path) -> None:
-    """Remove debug symbols from third-party Mach-O files so Connect does not expect dSYMs for them."""
+    """Remove debug symbols from the shipped Mach-O after dSYMs are emitted."""
     subprocess.run(
         ["strip", "-x", "-S", str(binary)],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+
+
+def emit_third_party_dsym(binary: Path, dsym_dir: Path | None) -> None:
+    """Emit a dSYM bundle into Xcode's dSYM folder so App Store Connect symbol upload succeeds."""
+    if dsym_dir is None:
+        return
+    try:
+        dsym_dir.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        return
+    out = dsym_dir / f"{binary.name}.dSYM"
+    if out.exists():
+        shutil.rmtree(out, ignore_errors=True)
+    subprocess.run(
+        ["dsymutil", str(binary), "-o", str(out)],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         check=False,
@@ -93,10 +112,9 @@ def sign_binary(binary: Path, *, entitlements: Path | None = None) -> None:
     subprocess.run(command, check=True)
 
 
-def patch_binary(binary: Path, copied: dict[str, Path]) -> None:
+def patch_binary(binary: Path, copied: dict[str, Path], dsym_dir: Path | None) -> None:
     deps = load_commands(binary)
     remove_code_signature(binary)
-    strip_for_app_store(binary)
     if binary.parent.name == "Frameworks":
         subprocess.run(["install_name_tool", "-id", install_name(binary), str(binary)], check=True)
 
@@ -114,6 +132,8 @@ def patch_binary(binary: Path, copied: dict[str, Path]) -> None:
             ],
             check=True,
         )
+    emit_third_party_dsym(binary, dsym_dir)
+    strip_for_app_store(binary)
     ffmpeg_entitlements = (
         FFMPEG_ENTITLEMENTS
         if binary.name == "ffmpeg" and binary.parent.name == "Resources"
@@ -154,9 +174,12 @@ def embed(app_path: Path) -> None:
             if is_homebrew_path(dep):
                 copy_dependency(dep, frameworks_dir, copied, queue)
 
-    patch_binary(ffmpeg_path, copied)
+    raw_dsym = os.environ.get("DWARF_DSYM_FOLDER_PATH", "").strip()
+    dsym_dir = Path(raw_dsym).resolve() if raw_dsym else None
+
+    patch_binary(ffmpeg_path, copied, dsym_dir)
     for binary in copied.values():
-        patch_binary(binary, copied)
+        patch_binary(binary, copied, dsym_dir)
 
 
 def verify(app_path: Path) -> None:
