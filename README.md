@@ -1,143 +1,124 @@
 <p align="center">
-  <img src="docs/images/app-icon.png" alt="Silence Remover icon" width="128" height="128">
+  <img src="docs/images/app-icon.png" alt="Audio Silence Remover icon" width="128" height="128">
 </p>
 
-# Silence Remover
+# Audio Silence Remover
 
-Silence Remover is a native macOS app built with SwiftUI that removes or shortens long pauses in spoken-word MP3 files.
+Native **macOS** app built with **SwiftUI** that removes or shortens long pauses in spoken-word **MP3** files—entirely on your machine.
 
-It is designed for podcasters, voiceover creators, audiobook editors, and anyone who wants faster spoken audio without sending files to a cloud service. Import an MP3, analyze silences locally, preview the result, and export a cleaned MP3 in seconds.
+Built for podcasters, voiceover, and audiobook workflows: import an MP3, tune silence detection, preview, and export a cleaned MP3 (default **192 kbps**) without sending audio to a cloud service.
 
-![Silence Remover screenshot](docs/images/app-screenshot.png)
+![Audio Silence Remover screenshot](docs/images/app-screenshot.png)
 
-## Why this project exists
+## Repository layout
 
-I built Silence Remover as a personal macOS product that combines product design, audio processing, and native Apple-platform engineering in one project.
+Everything lives in one **Xcode project** at the repo root:
 
-The goal is simple: make silence cleanup feel like a polished desktop utility instead of a script or a DAW workflow.
+| Path | Purpose |
+|------|---------|
+| `AudioSilenceRemover.xcodeproj` | App + tests; scheme **`AudioSilenceRemover`** |
+| `AudioSilenceRemover/` | SwiftUI app: UI, state, playback, export, resources |
+| `AudioSilenceRemover/Core/` | Audio pipeline: silence detection, trim, WAV/PCM I/O, MP3 staging, errors |
+| `AudioSilenceRemoverTests/` | Unit tests (detector, trimmer, waveform envelope, playback state machine) |
+| `scripts/package_app.sh` | Release **archive** → `dist/Audio Silence Remover.app` + **verify** signing |
+| `scripts/ffmpeg_bundle.py` | Embeds Homebrew-linked **ffmpeg** dylibs into the `.app` (build phase + verify) |
+| `docs/images/` | README assets |
+
+**Bundle ID:** `com.felipebasurto.audiosilenceremover` (matches the Mac App Store Connect app **Audio Silence Remover**).
 
 ## Highlights
 
-- Native macOS app built with `SwiftUI`
-- Local-first workflow with no server dependency
-- MP3 import, waveform visualization, silence detection, preview, and MP3 export
-- Two editing modes: remove pauses completely or compress them to a target duration
-- Bundled `ffmpeg` integration for MP3/WAV conversion
-- Test-covered audio processing core separated from the UI layer
-- Designed as both an open-source codebase and a product candidate for the Mac App Store
-
-The `ffmpeg` binary under `Sources/SoundRemover/Resources/` may be **dynamically linked** (for example to a Homebrew path on Apple Silicon). That works on a dev machine with the same libraries installed; for **distribution or Mac App Store**, ship a **statically linked** `ffmpeg` with the same filename so `dyld` does not depend on `/opt/homebrew`.
+- **Swift 6** + **SwiftUI** + **AVFoundation**, App **Sandbox** enabled
+- **Local-first**: no backend; files stay on disk you control
+- **Two modes:** remove silences entirely, or compress them to a target “breathing” length
+- **Waveform** preview, **MP3** in/out via bundled **ffmpeg**
+- **Recents** persisted with **security-scoped bookmarks** (sandbox-safe reopen)
+- **English / Spanish** strings under `AudioSilenceRemover/Resources/{en,es}.lproj/`
+- **Distribution path:** Xcode archive + `package_app.sh`; ffmpeg dependencies rewritten into `Contents/Frameworks` so the app does **not** rely on `/opt/homebrew` at runtime
 
 ## What it does
 
-1. Import an MP3 file.
-2. Detect pauses using a dB threshold and minimum silence duration.
-3. Choose between:
-   - `Remove pauses`: cut detected silences entirely
-   - `Reduce pauses`: keep a smaller, more natural breathing gap
-4. Preview the processed result inside the app.
-5. Export a new MP3 at `192 kbps`.
-
-## Tech Stack
-
-- `Swift 6`
-- `SwiftUI`
-- `AVFoundation`
-- `Swift Package Manager`
-- `ffmpeg`
+1. Import an MP3 (picker or drag-and-drop).
+2. Adjust threshold, minimum silence, and (in reduce mode) final pause.
+3. Choose **Remove pauses** or **Reduce pauses**.
+4. **Process** → preview **Original** / **Result** on the waveform.
+5. **Export** a new MP3.
 
 ## Architecture
 
-The project is intentionally split into two main layers:
+- **`AudioSilenceRemover`** — single macOS target: `@main`, scenes, `AppState`, services, UI under `UI/`, shared `Resources/`.
+- **`AudioSilenceRemover/Core`** — pure processing and file concerns, imported by the app so tests can target the same types without a separate Swift package.
+- **`AudioSilenceRemoverTests`** — XCTest / Swift Testing against **Core** (and UI-adjacent state where useful).
 
-- `SoundRemover`: the macOS app, UI, playback, resources, and export flow
-- `SoundRemoverCore`: reusable audio-processing logic, including file loading, silence detection, waveform generation, and trimming
+FFmpeg packaging:
 
-That split keeps the core logic testable and makes the project easier to present as a serious personal engineering project rather than a one-off prototype.
+- An Xcode **Run Script** phase runs `scripts/ffmpeg_bundle.py embed` on the built `.app`, copies required **`.dylib`** dependencies into **`Contents/Frameworks`**, and rewrites load paths (`install_name_tool`) so **`Contents/Resources/ffmpeg`** is self-contained for distribution.
+- **`package_app.sh`** archives Release, copies the product to **`dist/`**, runs **`ffmpeg_bundle.py verify`** (no lingering Homebrew paths), then **`codesign --verify --deep --strict`**.
 
-## Run locally
+## Requirements
 
-### Requirements
+- **macOS 14+**
+- **Xcode 16+** (Swift 6)
 
-- `macOS 14+`
-- `Xcode 16+` or a recent Swift 6 toolchain
+Building **Release** / `package_app.sh` assumes a working **`ffmpeg`** on the **build machine** (e.g. Homebrew) so the script can copy and relink its libraries into the bundle. Runtime on end users does **not** require Homebrew.
 
-### Open in Xcode
-
-```bash
-git clone https://github.com/felipebasurto/silence-remover.git
-cd silence-remover
-open Package.swift
-```
-
-Then run the `SoundRemover` executable target.
-
-For **Mac App Store** builds (archive / `.pkg`), open **`audiosilenceremover/audiosilenceremover.xcodeproj`**. The `audiosilenceremover` app target depends on the Swift package product **`SoundRemoverUI`**, which is the same UI as `swift run SoundRemover`.
-
-### Run from Terminal
+## Run in Xcode
 
 ```bash
 git clone https://github.com/felipebasurto/silence-remover.git
 cd silence-remover
-swift build
-swift run SoundRemover
+open AudioSilenceRemover.xcodeproj
 ```
 
-## Build the app bundle
+Select the **`AudioSilenceRemover`** scheme and run on **My Mac**.
+
+## Build & test from Terminal
+
+```bash
+xcodebuild \
+  -project AudioSilenceRemover.xcodeproj \
+  -scheme AudioSilenceRemover \
+  -configuration Debug \
+  -destination "platform=macOS" \
+  build
+```
+
+```bash
+xcodebuild \
+  -project AudioSilenceRemover.xcodeproj \
+  -scheme AudioSilenceRemover \
+  -destination "platform=macOS" \
+  test
+```
+
+Shared test plan: `AudioSilenceRemover.xcodeproj/xcshareddata/xctestplans/AudioSilenceRemover.xctestplan`.
+
+## Release `.app` (local)
 
 ```bash
 ./scripts/package_app.sh
 ```
 
-This creates:
+Produces **`dist/Audio Silence Remover.app`** (Release archive, verified ffmpeg linkage and codesign). Uses a repo-local **DerivedData** path (`.derivedData/`) so archives stay predictable.
 
-```bash
-dist/Sound\ Remover.app
-```
+## Logging
 
-## Tests
-
-```bash
-swift test
-```
-
-## Product Direction
-
-This repository is being developed with two goals in mind:
-
-- Open-source the implementation and document the architecture clearly
-- Ship a polished Mac utility that can evolve into a Mac App Store release
-
-Because of that, the project is intentionally opinionated about:
-
-- native UX over cross-platform tooling
-- local processing over cloud uploads
-- small-scope utility software with a strong visual identity
+FFmpeg resolution and runs log to **`Logger`** with subsystem **`AudioSilenceRemover`**, category **`FFmpeg`** (visible in **Console.app** when debugging).
 
 ## Privacy
 
-Silence Remover is built around an offline-first workflow. Audio files are processed locally on the device and are not uploaded to a backend service.
+Offline-first: audio is processed locally; nothing is uploaded by this app.
 
-## Why it works as a personal project
+## Product direction
 
-If you are reviewing this as a portfolio project, Silence Remover demonstrates:
+- Ship a focused Mac utility with a clear editorial story.
+- Keep the implementation readable as open source and suitable for **Mac App Store** submission (sandbox, signing, metadata) as the next tightening loop.
 
-- product thinking: a clear user problem and a focused utility
-- systems design: separation between app shell and processing core
-- media tooling: real file handling, waveform generation, and audio transformation
-- native platform work: macOS UI, app packaging, resources, and playback
-- engineering discipline: tests, structured code, and a path toward distribution
+## Roadmap (short)
 
-## Roadmap
-
-- Security-scoped bookmarks for persistent recent files
-- App Sandbox and Mac App Store readiness improvements
-- Better packaging, signing, and notarization workflow
-- Drag-and-drop polish and larger batch-processing workflows
-- Additional export settings and waveform editing controls
+- Hardening: export / sandbox edge cases, optional notarization docs in-repo.
+- UX: drag-and-drop polish, batch flows, more export options if needed.
 
 ## Status
 
-Active personal project.
-
-The current version already works as a native local utility, and the next major step is tightening the distribution path for a Mac App Store-ready release.
+Active personal project—the app runs as a local utility; distribution is centered on the Xcode archive + scripts above.
