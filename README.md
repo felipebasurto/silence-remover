@@ -143,6 +143,43 @@ Connect will block submission until these are done (your errors map here):
 5. **Screenshots** — Meet Apple’s **minimum** for Mac (use **Gestor de recursos multimedia** if needed); one screenshot may not be enough for all required display sizes.
 6. **App Review information** — **Nombre, apellidos, teléfono y correo** del contacto de revisión are required; “Es necesario iniciar sesión” only applies if the app needs an account (this app does not — leave login blank or indicate not applicable per Apple’s form).
 
+### App Review Information — Guideline 2.1 (Information Needed)
+
+Apple sometimes rejects new Mac submissions under **Guideline 2.1 – Performance: App Completeness** until **App Review Information → Notes** (and/or a reply in **Resolution Center**) includes enough context. Use the checklist below, then **record a short screen capture on a real Mac** (QuickTime Player → *File → New Screen Recording* is fine) and **attach** the `.mov`/`.mp4` in the resolution thread if Connect allows it, or host it (e.g. unlisted cloud link) and **paste the URL** in Notes.
+
+**Recording checklist (typical flow, cold launch):**
+
+1. Quit the app completely; start recording; launch **Audio Silence Remover** from Finder or Launchpad.
+2. **Import:** use **Select MP3** or drag a short spoken-word **MP3** into the window.
+3. Leave or adjust **Threshold / Minimum pause**; choose **Remove pauses** or **Reduce pauses**; tap **Process**; wait until the waveform shows **Result**.
+4. Switch **Original / Result** on the waveform if visible; optionally **Export MP3** and save to Desktop.
+5. Stop recording. No login, no IAP, no camera/mic/location prompts should appear for this app.
+
+**Paste the following into *App Review Information → Notes* (English is fine for reviewers).** Replace the bracketed video line with your attachment note or URL.
+
+```
+1) Screen recording
+[Attached as MP4 in Resolution Center / or URL: <paste link>]
+Screen recording captured on a physical Mac. Starts at cold launch, then: open app → import MP3 (file picker or drag-and-drop) → adjust optional sliders → Process → preview Original/Result on waveform → Export MP3. There is no account registration, login, IAP, subscription, user-generated content, or prompts for location/contacts/camera/microphone in this app.
+
+2) App purpose
+Audio Silence Remover is a macOS utility for podcasters, voiceover artists, audiobook editors, and anyone editing spoken-word MP3s. It detects long silences and either removes them or shortens them to a user-chosen “breathing” length so the track sounds tighter without manual cutting in a DAW for this specific task. Value: faster cleanup of dead air, 100% on-device, no cloud processing.
+
+3) How to review main features
+No login or demo credentials are required. Launch the app → import any spoken MP3 → optional: adjust Threshold, Minimum Pause, and (in Reduce mode) Final Pause → choose Remove Pauses or Reduce Pauses → Process → compare Original vs Result on the waveform → Export MP3 to a folder you choose. Sandbox: the app only accesses files the reviewer selects.
+
+4) External services / tools for core functionality
+None. Core processing runs entirely on the Mac. FFmpeg and required libraries are bundled inside the app bundle for local encode/decode; the app does not call our servers or third-party APIs for processing.
+
+5) Regional differences
+None. The same features are available in all regions. UI is localized in English and Spanish; behavior is identical.
+
+6) Highly regulated industry
+Not applicable. This is a general-purpose offline audio utility, not a regulated health/financial/legal service.
+```
+
+**Reply in Resolution Center:** Short message in English, e.g. *“We added the requested screen recording and expanded App Review Notes per Guideline 2.1. No login or external services. Please see Notes and attachment.”* Then **submit again** the version for review when Connect allows.
+
 ## App Store Connect — suggested listing copy
 
 Use or adapt this in **App Store Connect → App Information / Mac App Store** (English primary; add Spanish localization in **App Store** tab if you want).
