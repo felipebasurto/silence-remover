@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import plistlib
 import shutil
 import subprocess
 import sys
@@ -17,6 +18,11 @@ FFMPEG_ENTITLEMENTS = Path(__file__).resolve().parent / "ffmpeg-sandbox.entitlem
 
 def run(cmd: list[str]) -> str:
     result = subprocess.run(cmd, check=True, text=True, stdout=subprocess.PIPE)
+    return result.stdout
+
+
+def run_bytes(cmd: list[str]) -> bytes:
+    result = subprocess.run(cmd, check=True, stdout=subprocess.PIPE)
     return result.stdout
 
 
@@ -112,6 +118,20 @@ def sign_binary(binary: Path, *, entitlements: Path | None = None) -> None:
     subprocess.run(command, check=True)
 
 
+def read_entitlements(binary: Path) -> dict[str, object]:
+    try:
+        data = run_bytes(["codesign", "-d", "--entitlements", ":-", str(binary)])
+    except subprocess.CalledProcessError as error:
+        stderr = error.stderr.decode("utf-8", errors="replace") if error.stderr else ""
+        raise SystemExit(f"could not read entitlements for {binary}: {stderr}") from error
+    if not data:
+        return {}
+    try:
+        return plistlib.loads(data)
+    except plistlib.InvalidFileException as error:
+        raise SystemExit(f"invalid entitlements plist for {binary}") from error
+
+
 def patch_binary(binary: Path, copied: dict[str, Path], dsym_dir: Path | None) -> None:
     deps = load_commands(binary)
     remove_code_signature(binary)
@@ -202,6 +222,22 @@ def verify(app_path: Path) -> None:
 
     if not os.access(ffmpeg_path, os.X_OK):
         raise SystemExit(f"ffmpeg is not executable: {ffmpeg_path}")
+
+    ffmpeg_entitlements = read_entitlements(ffmpeg_path)
+    required_ffmpeg_entitlements = {
+        "com.apple.security.app-sandbox": True,
+        "com.apple.security.inherit": True,
+    }
+    missing_entitlements = [
+        key
+        for key, expected in required_ffmpeg_entitlements.items()
+        if ffmpeg_entitlements.get(key) != expected
+    ]
+    if missing_entitlements:
+        raise SystemExit(
+            "ffmpeg is not signed as a sandbox-inheriting helper; missing entitlements: "
+            + ", ".join(missing_entitlements)
+        )
 
     inspected = [ffmpeg_path]
     if frameworks_dir.exists():

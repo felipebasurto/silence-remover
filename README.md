@@ -125,7 +125,7 @@ Produces **`dist/Audio Silence Remover.app`** (Release archive, verified ffmpeg 
 
 ## Mac App Store (archive / validation)
 
-- Bundled **`Contents/Resources/ffmpeg`** is **code-signed with App Sandbox** via `scripts/ffmpeg-sandbox.entitlements` (same idea as the main app: sandbox + user-selected read-write). Without this, App Store Connect reports *“App sandbox not enabled”* for the nested ffmpeg executable.
+- Bundled **`Contents/Resources/ffmpeg`** is **code-signed as a sandbox-inheriting helper** via `scripts/ffmpeg-sandbox.entitlements` (`app-sandbox` + `inherit`). Without sandboxing, App Store Connect reports *“App sandbox not enabled”* for the nested executable; without inheritance, the shipped helper can die during sandbox initialization before FFmpeg writes stderr.
 - During **archive** (and other builds where Xcode sets **`DWARF_DSYM_FOLDER_PATH`**), `scripts/ffmpeg_bundle.py` runs **`dsymutil`** on ffmpeg and each embedded **`.dylib`** so those bundles land next to the app’s dSYM; App Store Connect’s *Upload Symbols* step can match UUIDs. After that, **`strip -x -S`** shrinks the shipped Mach-O files.
 
 Re-archive in Xcode after changing `scripts/ffmpeg_bundle.py` or entitlements.

@@ -26,7 +26,6 @@ cp -R "$ARCHIVE_APP_PATH" "$APP_PATH"
 "$ROOT_DIR/scripts/ffmpeg_bundle.py" verify "$APP_PATH"
 codesign \
   --force \
-  --deep \
   --sign - \
   --timestamp=none \
   --options runtime \

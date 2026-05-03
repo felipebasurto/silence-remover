@@ -152,9 +152,20 @@ struct FFmpegService {
             return AppLocale.text("error.ffmpeg_exit_with_output", "\(exitCode)", snippet)
         }
         if terminationReason == .uncaughtSignal {
-            return AppLocale.text("error.ffmpeg_uncaught_signal", "\(exitCode)")
+            return AppLocale.text("error.ffmpeg_uncaught_signal", signalDescription(exitCode))
         }
         return AppLocale.text("error.ffmpeg_no_output", "\(exitCode)")
+    }
+
+    nonisolated private static func signalDescription(_ code: Int32) -> String {
+        switch code {
+        case 5:
+            return "SIGTRAP (5)"
+        case 9:
+            return "SIGKILL (9)"
+        default:
+            return "signal \(code)"
+        }
     }
 
     nonisolated private static func truncate(_ s: String, max: Int) -> String {

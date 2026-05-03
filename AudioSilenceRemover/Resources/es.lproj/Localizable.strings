@@ -69,7 +69,7 @@
 "error.ffmpeg_unavailable" = "FFmpeg no está disponible dentro de la app.";
 "error.ffmpeg_failed" = "FFmpeg falló: %@";
 "error.ffmpeg_no_output" = "Código %@ — sin salida de error de ffmpeg (abre trace.log con Copiar diagnósticos).";
-"error.ffmpeg_uncaught_signal" = "ffmpeg terminó por señal del sistema %@ (a menudo SIGKILL=9: sandbox o sistema; no es el mensaje de error de ffmpeg). Consulta trace.log.";
+"error.ffmpeg_uncaught_signal" = "ffmpeg terminó con %@ antes de escribir un error. Normalmente apunta a sandbox, firma o política del sistema. Consulta trace.log.";
 "error.audio_unreadable" = "No se pudo leer el audio.";
 "error.audio_unsupported" = "El formato PCM no es compatible.";
 "error.temporary_failed" = "No se pudo crear un archivo temporal: %@";

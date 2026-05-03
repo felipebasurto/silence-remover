@@ -69,7 +69,7 @@
 "error.ffmpeg_unavailable" = "FFmpeg is not available inside the app.";
 "error.ffmpeg_failed" = "FFmpeg failed: %@";
 "error.ffmpeg_no_output" = "Exit code %@ — no ffmpeg stderr/stdout (open trace.log from Copy diagnostics).";
-"error.ffmpeg_uncaught_signal" = "ffmpeg stopped by OS signal %@ (often SIGKILL=9: sandbox or system; not ffmpeg’s own exit text). See trace.log.";
+"error.ffmpeg_uncaught_signal" = "ffmpeg stopped with %@ before writing an error. This usually points to sandbox, signing, or system policy. See trace.log.";
 "error.audio_unreadable" = "The audio file could not be read.";
 "error.audio_unsupported" = "The PCM format is not supported.";
 "error.temporary_failed" = "A temporary file could not be created: %@";
